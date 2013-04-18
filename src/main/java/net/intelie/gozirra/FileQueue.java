@@ -1,4 +1,4 @@
-package net.ser1.stomp;
+package net.intelie.gozirra;
 
 /*
  * (c)2005 Sean Russell

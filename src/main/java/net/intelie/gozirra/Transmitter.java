@@ -1,4 +1,4 @@
-package net.ser1.stomp;
+package net.intelie.gozirra;
 
 import java.io.IOException;
 import java.util.Iterator;

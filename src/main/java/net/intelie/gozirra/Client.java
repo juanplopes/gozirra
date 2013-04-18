@@ -1,4 +1,4 @@
-package net.ser1.stomp;
+package net.intelie.gozirra;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.security.auth.login.LoginException;
