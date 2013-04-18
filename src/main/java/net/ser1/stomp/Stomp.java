@@ -458,7 +458,7 @@ public abstract class Stomp {
      */
     public boolean hasReceipt(String receipt_id) {
         synchronized (_receipts) {
-            for (Iterator i = _receipts.iterator(); i.hasNext();) {
+            for (Iterator i = _receipts.iterator(); i.hasNext(); ) {
                 String o = (String) i.next();
                 if (o.equals(receipt_id)) return true;
             }
@@ -474,7 +474,7 @@ public abstract class Stomp {
      */
     public void clearReceipt(String receipt_id) {
         synchronized (_receipts) {
-            for (Iterator i = _receipts.iterator(); i.hasNext();) {
+            for (Iterator i = _receipts.iterator(); i.hasNext(); ) {
                 String o = (String) i.next();
                 if (o.equals(receipt_id)) i.remove();
             }
@@ -539,7 +539,7 @@ public abstract class Stomp {
                 List listeners = (List) _listeners.get(destination);
                 if (listeners != null) {
                     listeners = new ArrayList(listeners);
-                    for (Iterator i = listeners.iterator(); i.hasNext();) {
+                    for (Iterator i = listeners.iterator(); i.hasNext(); ) {
                         Listener l = (Listener) i.next();
                         try {
                             l.message(h, b);
@@ -564,7 +564,7 @@ public abstract class Stomp {
         } else if (c == Command.ERROR) {
             if (_error_listeners.size() > 0) {
                 synchronized (_error_listeners) {
-                    for (Iterator i = _error_listeners.iterator(); i.hasNext();) {
+                    for (Iterator i = _error_listeners.iterator(); i.hasNext(); ) {
                         try {
                             ((Listener) i.next()).message(h, b);
                         } catch (Exception e) {

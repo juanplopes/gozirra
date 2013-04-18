@@ -1,7 +1,6 @@
 package net.ser1.stomp;
 
 import java.util.Map;
-import java.util.Iterator;
 
 /**
  * A client that is connected directly to a server.  Messages sent via

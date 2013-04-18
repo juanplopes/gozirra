@@ -1,10 +1,13 @@
 package net.ser1.stomp;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.io.*;
-import java.net.Socket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements a Stomp client connection to a Stomp server via the network.
@@ -45,7 +48,29 @@ public class Client extends Stomp implements MessageReceiver {
      */
     public Client(String server, int port, String login, String pass)
             throws IOException, LoginException {
-        _socket = new Socket(server, port);
+        this(server, port, false, login, pass);
+    }
+
+    /**
+     * Connects to a server
+     * <p/>
+     * Example:
+     * <pre>
+     *   Client stomp_client = new Client( "host.com", 61626 );
+     *   stomp_client.subscribe( "/my/messages" );
+     *   ...
+     * </pre>
+     *
+     * @param server The IP or host name of the server
+     * @param port   The port the server is listening on
+     * @param ssl    Sets SSL socket usage
+     * @see Stomp
+     */
+    public Client(String server, int port, boolean ssl, String login, String pass)
+            throws IOException, LoginException {
+        _socket = ssl ?
+                SSLSocketFactory.getDefault().createSocket(server, port) :
+                new Socket(server, port);
         _input = _socket.getInputStream();
         _output = _socket.getOutputStream();
 

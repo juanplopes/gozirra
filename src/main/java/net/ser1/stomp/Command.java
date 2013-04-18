@@ -1,8 +1,5 @@
 package net.ser1.stomp;
 
-import java.io.OutputStream;
-import java.io.IOException;
-
 /**
  * (c)2005 Sean Russell
  */
