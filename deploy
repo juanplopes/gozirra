@@ -1,0 +1,7 @@
+if [ $# -lt 1 ]; then
+    echo 'deploy <path>'
+    echo 'deploy ~/Projects/mvn-repo'
+    exit 0
+fi
+
+mvn clean deploy -DaltDeploymentRepository=internal.repo::default::file://$1

@@ -1,8 +1,5 @@
 package net.intelie.gozirra;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.*;
 import java.util.HashMap;
 
@@ -10,9 +7,6 @@ import java.util.HashMap;
  * (c)2005 Sean Russell
  */
 public class Receiver extends Thread {
-
-    private static final transient Log LOG = LogFactory.getLog(Receiver.class);
-
     private MessageReceiver _receiver;
     private BufferedReader _input;
     private InputStream _stream;
