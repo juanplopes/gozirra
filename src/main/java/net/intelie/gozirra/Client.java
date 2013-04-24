@@ -1,11 +1,12 @@
 package net.intelie.gozirra;
 
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,9 +69,15 @@ public class Client extends Stomp implements MessageReceiver {
      */
     public Client(String server, int port, boolean ssl, String login, String pass)
             throws IOException, LoginException {
-        _socket = ssl ?
-                SSLSocketFactory.getDefault().createSocket(server, port) :
-                new Socket(server, port);
+        if (ssl) {
+            try {
+                _socket = SSLContext.getDefault().getSocketFactory().createSocket(server, port);
+            } catch (NoSuchAlgorithmException e) {
+                throw new IOException(e);
+            }
+        } else {
+            _socket = new Socket(server, port);
+        }
         _input = _socket.getInputStream();
         _output = _socket.getOutputStream();
 
@@ -112,7 +119,6 @@ public class Client extends Stomp implements MessageReceiver {
         } catch (IOException e) {/* We ignore these. */}
         _connected = false;
     }
-
 
     /**
      * Transmit a message to the server

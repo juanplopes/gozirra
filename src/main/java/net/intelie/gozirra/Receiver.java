@@ -1,6 +1,7 @@
 package net.intelie.gozirra;
 
 import java.io.*;
+import java.net.SocketException;
 import java.util.HashMap;
 
 /**
@@ -26,6 +27,7 @@ public class Receiver extends Thread {
             _stream = input;
             _input = new BufferedReader(new InputStreamReader(input, Command.ENCODING));
         } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
             // No, no, no.  Stupid Java.
         }
     }
@@ -35,58 +37,49 @@ public class Receiver extends Thread {
         try {
             while (!isInterrupted()) {
                 // Get command
-                if (_input.ready()) {
-                    String command = _input.readLine();
-                    if (command.length() > 0) {
-                        try {
-                            Command c = Command.valueOf(command);
-                            // Get headers
-                            HashMap headers = new HashMap();
-                            String header;
-                            while ((header = _input.readLine()).length() > 0) {
-                                int ind = header.indexOf(':');
-                                String k = header.substring(0, ind);
-                                String v = header.substring(ind + 1, header.length());
-                                headers.put(k.trim(), v.trim());
-                            }
-                            // Read body
-                            StringBuffer body = new StringBuffer();
-                            int b;
-                            while ((b = _input.read()) != 0) {
-                                body.append((char) b);
-                            }
+                String command = _input.readLine();
+                if (command.length() > 0) {
+                    try {
+                        Command c = Command.valueOf(command);
+                        // Get headers
+                        HashMap headers = new HashMap();
+                        String header;
+                        while ((header = _input.readLine()).length() > 0) {
+                            int ind = header.indexOf(':');
+                            String k = header.substring(0, ind);
+                            String v = header.substring(ind + 1, header.length());
+                            headers.put(k.trim(), v.trim());
+                        }
+                        // Read body
+                        StringBuffer body = new StringBuffer();
+                        int b;
+                        while ((b = _input.read()) != 0) {
+                            body.append((char) b);
+                        }
 
-                            try {
-                                _receiver.receive(c, headers, body.toString());
-                            } catch (Exception e) {
-                                // We ignore these errors; we don't want client code
-                                // crashing our listener.
-                            }
-                        } catch (Error e) {
-                            try {
-                                while (_input.read() != 0) ;
-                            } catch (Exception ex) {
-                            }
-                            try {
-                                _receiver.receive(Command.ERROR, null, e.getMessage() + "\n");
-                            } catch (Exception ex) {
-                                // We ignore these errors; we don't want client code
-                                // crashing our listener.
-                            }
+                        try {
+                            _receiver.receive(c, headers, body.toString());
+                        } catch (Exception e) {
+                            // We ignore these errors; we don't want client code
+                            // crashing our listener.
+                        }
+                    } catch (Error e) {
+                        try {
+                            while (_input.read() != 0) ;
+                        } catch (Exception ex) {
+                        }
+                        try {
+                            _receiver.receive(Command.ERROR, null, e.getMessage() + "\n");
+                        } catch (Exception ex) {
+                            // We ignore these errors; we don't want client code
+                            // crashing our listener.
                         }
                     }
-                } else {
-                    if (_receiver.isClosed()) {
-                        _receiver.disconnect();
-                        return;
-                    }
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        interrupt();
-                    }
                 }
+
             }
+        } catch (SocketException ignored) {
+            //ignoring
         } catch (IOException e) {
             // What do we do with IO Exceptions?  Report it to the receiver, and
             // exit the thread.
